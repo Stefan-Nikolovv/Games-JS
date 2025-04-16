@@ -113,17 +113,35 @@ window.addEventListener("load", function () {
       this.x = this.game.width;
       this.speedX = Math.random() * -1.5 - 0.5;
       this.markedForDeletion = false;
-      this.lives = 5;
-      this.score = this.lives;
+      this.frameX = 0;
+      this.frameY = 0;
+      this.maxFrame = 37;
     }
     update() {
-      this.x += this.speedX;
+      this.x += this.speedX - this.game.speed;
       if (this.x + this.width < 0) this.markedForDeletion = true;
+      // sprite animation
+      if (this.frameX < this.maxFrame) {
+        this.frameX++;
+      } else {
+        this.frameX = 0;
+      }
     }
     draw(context) {
-      context.fillStyle = "red";
-      context.fillRect(this.x, this.y, this.width, this.height);
-      context.fillStyle = "black";
+      if (this.game.debug)
+        context.strokeRect(this.x, this.y, this.width, this.height);
+
+      context.drawImage(
+        this.image,
+        this.frameX * this.width,
+        this.frameY * this.height,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
       context.font = "20px Helvetica";
       context.fillText(this.lives, this.x, this.y);
     }
@@ -131,9 +149,26 @@ window.addEventListener("load", function () {
   class Angler1 extends Enemy {
     constructor(game) {
       super(game);
-      this.width = 228 * 0.2;
-      this.height = 169 * 0.2;
+      this.width = 228;
+      this.height = 169;
+      this.lives = 2;
+      this.score = this.lives;
       this.y = Math.random() * (this.game.height * 0.9 - this.height);
+      this.image = document.getElementById("angler1");
+      this.frameY = Math.floor(Math.random() * 3);
+    }
+  }
+
+  class Angler2 extends Enemy {
+    constructor(game) {
+      super(game);
+      this.width = 213;
+      this.height = 165;
+      this.lives = 3;
+      this.score = this.lives;
+      this.y = Math.random() * (this.game.height * 0.9 - this.height);
+      this.image = document.getElementById("angler2");
+      this.frameY = Math.floor(Math.random() * 2);
     }
   }
   class Layer {
@@ -302,7 +337,9 @@ window.addEventListener("load", function () {
       this.background.layer4.draw(context);
     }
     addEnemy() {
-      this.enemies.push(new Angler1(this));
+      const randomize = Math.random();
+      if (randomize < 0.5) this.enemies.push(new Angler1(this));
+      else this.enemies.push(new Angler2(this));
     }
     checkCollision(rect1, rect2) {
       return (
