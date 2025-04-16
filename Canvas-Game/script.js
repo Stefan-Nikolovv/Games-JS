@@ -35,14 +35,14 @@ window.addEventListener("load", function () {
       this.height = 3;
       this.speed = 3;
       this.markedForDeletion = false;
+      this.image = document.getElementById("projectile");
     }
     update() {
       this.x += this.speed;
       if (this.x > this.game.width * 0.8) this.markedForDeletion = true;
     }
     draw(context) {
-      context.fillStyle = "yellow";
-      context.fillRect(this.x, this.y, this.width, this.height);
+      context.drawImage(this.image, this.x, this.y);
     }
   }
   class Particle {}
@@ -70,6 +70,10 @@ window.addEventListener("load", function () {
         this.speedY = this.maxSpeed;
       else this.speedY = 0;
       this.y += this.speedY;
+      //verical boundaries
+      if (this.y > this.game.height - this.height * 0.5)
+        this.y = this.game.height - this.height * 0.5;
+      else if (this.y < -this.height * 0.5) this.y = -this.height * 0.5;
       //handle projectiles
       this.projectiles.forEach((projectile) => {
         projectile.update();
@@ -170,8 +174,10 @@ window.addEventListener("load", function () {
         this.width,
         this.height
       );
-      context.font = "20px Helvetica";
-      context.fillText(this.lives, this.x, this.y);
+      if (this.game.debug) {
+        context.font = "20px Helvetica";
+        context.fillText(this.lives, this.x, this.y);
+      }
     }
   }
   class Angler1 extends Enemy {
@@ -256,12 +262,12 @@ window.addEventListener("load", function () {
     constructor(game) {
       this.game = game;
       this.fontSize = 25;
-      this.fontFamily = "Helvetica";
+      this.fontFamily = "Bangers";
       this.color = "white";
     }
     draw(context) {
       context.save();
-      context.fßillStyle = this.color;
+      context.fillStyle = this.color;
       context.shadowOffsetX = 2;
       context.shadowOffsetY = 2;
       context.shadowColor = "black";
@@ -278,23 +284,23 @@ window.addEventListener("load", function () {
         let message1;
         let message2;
         if (this.game.score > this.game.winningScore) {
-          message1 = "You win";
-          message2 = "Well done!";
+          message1 = "Most Wondrous";
+          message2 = "Well done explorer!";
         } else {
-          message1 = "You lose";
-          message2 = "Try again next time!";
+          message1 = "Blazes!";
+          message2 = "Get my repair kit and try again!";
         }
-        context.font = "50px " + this.fontFamily;
+        context.font = "70px " + this.fontFamily;
         context.fillText(
           message1,
           this.game.width * 0.5,
-          this.game.height * 0.5 - 40
+          this.game.height * 0.5 - 20
         );
         context.font = "25px " + this.fontFamily;
         context.fillText(
           message2,
           this.game.width * 0.5,
-          this.game.height * 0.5 + 40
+          this.game.height * 0.5 + 20
         );
       }
       //ammo
