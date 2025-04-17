@@ -14,15 +14,19 @@ window.addEventListener("load", function () {
           this.game.keys.indexOf(e.key) === -1
         ) {
           this.game.keys.push(e.key);
+          e.preventDefault();
         } else if (e.key === " ") {
           this.game.player.shootTop();
+          e.preventDefault();
         } else if (e.key === "d") {
           this.game.debug = !this.game.debug;
+          e.preventDefault();
         }
       });
       window.addEventListener("keyup", (e) => {
         if (this.game.keys.indexOf(e.key) > -1) {
           this.game.keys.splice(this.game.keys.indexOf(e.key), 1);
+          e.preventDefault();
         }
       });
     }
